@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Task Tracker</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Task Tracker</h1>
+
+        <form action="tasks" th:object="${newTask}" method="post" class="add-form">
+            <input type="text" th:field="*{title}" placeholder="Add a new task..." autofocus />
+            <button type="submit">Add</button>
+        </form>
+        <p class="error" th:if="${#fields.hasErrors('newTask.title')}" th:errors="*{newTask.title}"></p>
+
+        <ul class="task-list">
+            <li th:each="task : ${tasks}" th:classappend="${task.done} ? 'done' : ''">
+                <form th:action="'tasks/' + ${task.id} + '/toggle'" method="post" class="inline-form">
+                    <button type="submit" class="toggle-btn" th:text="${task.done} ? '✔' : '○'"></button>
+                </form>
+                <span th:text="${task.title}">Task title</span>
+                <form th:action="'tasks/' + ${task.id} + '/delete'" method="post" class="inline-form delete-form">
+                    <button type="submit" class="delete-btn">✕</button>
+                </form>
+            </li>
+        </ul>
+
+        <p class="empty-state" th:if="${#lists.isEmpty(tasks)}">No tasks yet — add one above.</p>
+        <p class="last-refreshed" th:text="'Last refreshed: ' + ${lastRefreshed}">Last refreshed: --</p>
+    </div>
+</body>
+</html>
